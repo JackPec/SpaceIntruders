@@ -1,0 +1,111 @@
+<html>
+<head>
+
+	<style>
+		canvas{
+			background: #dddddd;
+		}
+	</style>
+
+	<script>
+
+
+		//
+		// COPY IN ANY CLASSES THAT YOU'LL USE, e.g. timerClass or rectClass
+		//
+		
+	
+		// Canvas context; used to call Canvas methods
+		var c;
+
+		// Canvas width and height.
+		var cWidth, cHeight;
+
+		// Stores the current keyboard state
+		var curkeys = [];
+		
+		// Stores keys that have been newly pressed since last update
+		var newkeys = [];
+
+
+
+		// Initializes entire game framework. This method should only be called
+		// once, by the body onload event handler.
+		function gameFrameworkInit(){		
+			// Initialize key arrays
+			for (i = 0; i < 256; i++){
+				curkeys[i] = false;
+				newkeys[i] = false;
+			}
+		
+			// Initialize global variables for canvas
+			c = myCanvas.getContext('2d');
+			cWidth = myCanvas.width;
+			cHeight = myCanvas.height;
+
+
+			// Start listeners for getting keyboard state
+	        window.addEventListener('keydown',
+	        						 function(e){
+										if (!curkeys[e.keyCode]){
+											curkeys[e.keyCode] = true;
+											newkeys[e.keyCode] = true;
+										}
+									 }
+	        					   );
+	        
+	        window.addEventListener('keyup',
+	        						 function(e){ curkeys[e.keyCode] = false; }
+	        					   );
+
+			// Schedule the update function to be called right before the next repaint.
+			// (At the end of the update function, it will schedule itself to be called
+			// again before the NEXT repaint, and so on.
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+
+		function gameUpdate(){
+			//
+			// YOUR CODE GOES HERE
+			//
+
+			// DO NOT ADD ANY OR MODIFY ANY CODE BELOW HERE
+
+			// Reset newkeys
+			for (i = 0; i < 256; i++){
+				newkeys[i] = false;
+			}
+
+			// At the end of the update function, repaint the screen
+			gameDraw();
+				
+			// Last thing the update function does is to schedule itself to be called
+			// again before the next repaint
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+
+		function gameDraw(){
+			// Clear the canvas before we draw the current frame
+			c.clearRect(0,0,cWidth,cHeight);
+
+			//
+			// YOUR CODE GOES BELOW HERE
+			//
+		}
+
+
+	</script>
+
+</head>
+
+
+<body onload="gameFrameworkInit()">
+	
+	<canvas id="myCanvas" width="800" height="600"></canvas>
+
+</body>
+
+
+</html>

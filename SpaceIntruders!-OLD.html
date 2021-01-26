@@ -1,0 +1,780 @@
+<html>
+<head>
+
+	<style>
+		canvas{
+			background: #dddddd;
+		}
+	</style>
+
+	<script>
+
+
+		//
+		// COPY IN ANY CLASSES THAT YOU'LL USE, e.g. timerClass or rectClass
+		//
+			class timerClass{
+			constructor(timeIntervalMS){
+				// Initialize oldTime to be the time of creation
+				this.oldTime = new Date();
+
+				// Set interval to elapse before the timer fires
+				this.interval = timeIntervalMS;
+				
+				// Keeps track of the # of milliseconds accumulated since the last firing
+				this.accum = 0;
+			}
+
+			// This method returns true if the timer is ready to fire, false otherwise
+			// If it returns true, then resets fire interval
+		
+			isReady(){
+				var curTime = new Date();
+				var delta = curTime - this.oldTime;
+
+				this.accum += delta;
+				this.oldTime = curTime;
+				if (this.accum > this.interval){
+					this.accum = 0;
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+		}
+		
+		class playerShipClass{
+
+			// Constructor
+			constructor(){
+				this.x = 325;
+				this.y = 300;
+				this.width = 50;
+				this.height = 75;
+
+				this.img = new Image();
+				this.img.src = "playership.png";
+			}
+			
+			intersects(obj){ // intersect code
+				if (this.x < obj.x + obj.width &&
+					this.x + this.width > obj.x &&
+					this.y < obj.y + obj.height &&
+					this.y + this.height > obj.y)
+				{
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+			//update
+			update(){
+			for (i = 0; i < numofAliens; i++){ // if the playership intersects any of the AlienArrayWall, 
+					if (alienArrayWall[i].bVisible == true && this.intersects(alienArrayWall[i])){
+						alienArrayWall[i].bVisible = false;
+						playerlives -= 10;
+						}
+			}
+			
+			
+			for (i = 0; i < numofAliens2; i++){ // if the playership intersects any of the AlienArrayWall, 
+					if (alienAttacker[i].bVisible == true && this.intersects(alienAttacker[i])){
+						alienAttacker[i].bVisible = false;
+						playerlives -= 60;
+						}
+			}
+			
+			
+			
+			
+			
+			
+			}
+			
+			
+			// Movement methods
+			moveRight(){
+			if(this.x > cWidth){
+				this.x = -100;
+				}
+				this.x += playerShipSpeed;
+				
+			}
+			moveLeft(){
+				if(this.x < -100){
+				this.x = 800;
+				}
+					this.x -= playerShipSpeed;
+				
+			}
+			moveUp(){
+				if (this.y > playerShipSpeed){
+					this.y -= playerShipSpeed;
+				}
+			}
+			moveDown(){
+				if (this.y + this.height < cHeight-100-playerShipSpeed){
+					this.y += playerShipSpeed;
+				}
+			}
+				
+			boost(){
+				if(curkeys[37] && curkeys[32] && booster > 0){ //move left
+				this.x -= playerShipSpeed
+				booster -= 1
+				}else
+				
+				if(curkeys[39] && curkeys[32] && booster > 0){ // move right
+				this.x += playerShipSpeed
+				booster -= 1
+				}else
+				
+				if(curkeys[38] && curkeys[32] && booster > 0){ //move up
+				this.y -= playerShipSpeed;
+				booster -= 1
+				}else
+				
+				if(curkeys[40] && curkeys[32] && booster > 0){ // move down
+				this.y += playerShipSpeed;
+				booster -= 1
+				}else if(booster < 16){
+				
+				booster += 0.1
+				}
+			
+			
+			}
+			// Draw method
+			draw(){
+				c.drawImage(this.img, this.x, this.y, this.width, this.height);
+			}
+		}
+		
+		class cometClass{
+
+			// Constructor
+			constructor(){
+				this.x = 325;
+				this.y = 300;
+				this.width = 100;
+				this.height = 125;
+
+				this.img = new Image();
+				this.img.src = "comet.png";
+			}
+
+		updateComet(){
+				var cometSpeed = 5;
+				//if this.x is greater then cWidth
+				// then wrap (set rectX back to 0)
+				if(this.x > cWidth){
+				this.x = 0;
+				}
+				//if this.y is greater then cHeight
+				// then wrap (set rectY back to 0)
+				if(this.y > cHeight){
+				this.y =0;
+				}
+		
+				this.x += cometSpeed
+				this.y += cometSpeed
+		}
+			// Draw method
+			draw(){
+				c.drawImage(this.img, this.x, this.y, this.width, this.height);
+			}
+		}
+		
+		class alienClass{
+
+			// Constructor
+			constructor(alienX, alienY){
+				this.x = alienX;
+				this.y = alienY;
+				this.width = 50
+				this.height = 50
+
+				this.img = new Image();
+				this.img.src = "UFOfirst.png";
+				this.bVisible = true;
+			}
+
+			
+			intersects(obj){
+				if (this.x < obj.x + obj.width &&
+					this.x + this.width > obj.x &&
+					this.y < obj.y + obj.height &&
+					this.y + this.height > obj.y)
+				{
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+
+			updateIntroAlien(){
+			var speed = 3
+			
+				
+				if(speed == 3){
+					this.x -= speed
+					if(this.x < -200){
+					this.x = 800 
+					
+					}
+				}
+			}
+		
+		updateAlienWall(){
+			var speed = 3
+				if(speed == 3){
+					this.y += speed
+					this.x -= speed
+					if(this.x < -200){
+					this.x = 800 
+					}
+					if(this.y > 700){
+					this.y = -50 
+					}
+				
+				
+				}
+		}
+		
+		updateAlienAttacker(){
+			//	this.x = playerShip.x 	
+			//this.y += 1
+	
+			
+			if(this.y > 700){
+					this.y = -50 
+					}
+			//	
+			if(this.x > playerShip.x){
+			this.x -= 2
+			
+			}
+			else if(this.x < playerShip.x){
+			this.x += 2
+			
+			}
+			
+			if(this.y > playerShip.y){
+			this.y -= 2
+			
+			}
+			else if(this.y < playerShip.y){
+			this.y += 2
+			
+			}
+			
+			if(alienAttackerHeath < 0){
+				for (i = 0; i < numofAliens2; i++){
+				alienAttacker[i].bVisible = false;
+				}
+				}
+			}
+			
+		// Draw method
+			draw(){
+				if (this.bVisible){ // draws the alien only if bVisible is true
+					c.drawImage(this.img, this.x, this.y, this.width, this.height);
+				}
+			}
+		}
+		
+		class menuClass{
+
+			// Constructor
+			constructor(X, Y, W,H){
+				this.x = X;
+				this.y = Y;
+				this.width = W;
+				this.height = H;
+
+				this.img = new Image();
+				this.img.src = "menuBarA.png";
+			}
+			
+		update(){
+			
+		}
+		// Draw method
+			draw(){
+				c.drawImage(this.img, this.x, this.y, this.width, this.height);
+			}
+		}
+		
+		class playerlaserClass{
+			constructor(playerlaserX, playerlaserY){
+			
+				this.x = playerlaserX;
+				this.y = playerlaserY;
+				this.width = 10;
+				this.height = 20;
+				
+				this.img = new Image();
+				this.img.src = "Playerslaser.png";
+				this.bVisible = false;
+			
+			}
+
+			intersects(obj){
+				if (this.x < obj.x + obj.width &&
+					this.x + this.width > obj.x &&
+					this.y < obj.y + obj.height &&
+					this.y + this.height > obj.y)
+				{
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+			// If this playerlaser is visible, then move it to the right.
+			// If the playerlaser goes off the screen, mark it invisible.
+			update(){
+					if(this.bVisible == true){
+					this.y -= 10
+					}
+					if(this.y < -15){
+					this.bVisible = false
+					}
+				
+				if(this.bVisible == true){
+					for (i = 0; i < numofAliens; i++){
+					if (alienArrayWall[i].bVisible == true && this.intersects(alienArrayWall[i])&& this.y > 1){ //if the bad guy is visible and touches the laser, then boom!, and score
+						alienArrayWall[i].bVisible = false;
+						this.bVisible = false
+						score += 10;
+						}
+						}
+				
+					for (i = 0; i < numofAliens2; i++){
+					if (alienAttacker[i].bVisible == true && this.intersects(alienAttacker[i])&& this.y > 1){ //if the bad guy is visible and touches the laser, then boom!, and score
+						//alienAttacker[i].bVisible = false;
+						alienAttackerHeath -= 10;
+						this.bVisible = false
+						score += 10;
+						}
+						}
+				
+				}	
+				
+				
+				}
+		
+
+			// If this playerlaser is visible, then draw it on the screen.
+			draw(){
+				if (this.bVisible == true){
+					c.drawImage(this.img, this.x, this.y, this.width, this.height);	
+				}
+			}	
+		}
+		class crateClass{
+
+			// Constructor
+			constructor(crateX, crateY){
+				this.x = crateX;
+				this.y = crateY;
+				this.width = 100
+				this.height = 50
+
+				this.img = new Image();
+				this.img.src = "ammocrate.png";
+				this.bVisible = true;
+			}
+
+			
+			intersects(obj){
+				if (this.x < obj.x + obj.width &&
+					this.x + this.width > obj.x &&
+					this.y < obj.y + obj.height &&
+					this.y + this.height > obj.y)
+				{
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+
+		updateAmmoDrop(){
+			// write code for when the ammo should appear
+				this.y += 1
+				this.x = 350
+			if(this.y > 1000){
+			numofAmmoGiven += 10;
+			this.bVisible = true
+			this.y = -20
+			}
+
+			
+			if(this.bVisible == true && this.intersects(playerShip)){
+				ammo += numofAmmoGiven
+				this.bVisible = false
+			}
+			
+			}
+			
+		// Draw method
+			draw(){
+				if (this.bVisible){ // draws the ammocrate only if bVisible is true
+					c.drawImage(this.img, this.x, this.y, this.width, this.height);
+				}
+			}
+		}
+		
+		
+		// Canvas context; used to call Canvas methods
+		var c;
+
+		// Canvas width and height.
+		var cWidth, cHeight;
+
+		// Stores the current keyboard state
+		var curkeys = [];
+		
+		// Stores keys that have been newly pressed since last update
+		var newkeys = [];
+
+		//ENEMY 
+		var rockArray = [];
+		var alienArrayWall = [];
+		var numofAliens = 20 
+		var numofAliens2 = 1
+		var alienAttacker = [];
+		var	introAlien = new alienClass(800,100,50,50,"UFOfirst.png");
+		var introAlien2 = new alienClass(800,300,50,50,"UFOfirst.png");
+		for (i = 0; i < numofAliens2; i++){
+		var alienAttackerHeath = 100;
+		}
+		//AMMO
+			//var pLaser = new playerlaserClass(1000,1000); 
+		var ammo = 20;
+		var laserArray = [];
+		var laserIndex = 0;
+		var weaponState = "laser";
+		var numofAmmoGiven = 10;
+		//SCORE
+		var score = 0;
+		//var flashingTimer = new timerClass(1000);
+		
+		//PLAYER
+		var playerShipSpeed = 5
+		var playerlives = 100;
+		var	splashTimer = new timerClass(3000);
+		var gameMusic = new Audio('8bit.mp3');
+		var	playerShip = new playerShipClass();
+		var booster = 15;
+		//track the current laser with an index
+		
+		// The current game state, can be one of: "play", "gameover", "rules", "lose", "intro"
+		var gameState = "intro";
+		//the current weapon state, can be one of;"laser","shotgun", etc.
+		
+		//OTHER
+		var	comet = new cometClass();
+		var crate = new crateClass(0,0,"ammocrate.png");
+		var menubar1 = new menuClass(0,500,800,100,"menuBarA.png");
+		
+		// Initializes entire game framework. This method should only be called
+		// once, by the body onload event handler.
+		function gameFrameworkInit(){		
+			// Initialize key arrays
+			for (i = 0; i < 256; i++){
+				curkeys[i] = false;
+				newkeys[i] = false;
+			}
+		
+			// Initialize global variables for canvas
+			c = myCanvas.getContext('2d');
+			cWidth = myCanvas.width;
+			cHeight = myCanvas.height;
+
+		// Populate alienArrayWall[] with numofAliens ufos spread out near the top of the canvas
+			for (i = 0; i < numofAliens; i++){
+				alienArrayWall[i] = new alienClass(50*i, numofAliens);
+			}
+			
+			for (i = 0; i < numofAliens2; i++){
+				alienAttacker[i] = new alienClass(50*i, -100);
+			}
+			
+			
+	
+			for(i=0; i < 100; i ++){
+			laserArray[i] = new playerlaserClass(1000,1000); 
+		
+			}
+		
+			// Start listeners for getting keyboard state
+	        window.addEventListener('keydown',
+	        						 function(e){
+										if (!curkeys[e.keyCode]){
+											curkeys[e.keyCode] = true;
+											newkeys[e.keyCode] = true;
+										}
+									 }
+	        					   );
+	        
+	        window.addEventListener('keyup',
+	        						 function(e){ curkeys[e.keyCode] = false; }
+	        					   );
+
+			// Schedule the update function to be called right before the next repaint.
+			// (At the end of the update function, it will schedule itself to be called
+			// again before the NEXT repaint, and so on.
+			window.requestAnimationFrame(gameUpdate);
+		
+	
+		
+		}
+
+
+		function gameUpdate(){
+			if(gameState == "intro"){
+				introScreen = new Image();
+				introScreen.src = "IntroPic.png";
+				introTitle = new Image();
+				introTitle.src = "title.png";
+				comet.updateComet();
+				introAlien.updateIntroAlien();
+				introAlien2.updateIntroAlien();
+				if(curkeys[13]){ 
+				gameState = "rules"
+				}
+			
+			}
+			
+			if(gameState == "rules"){
+			rulesSpace = new Image();
+			rulesSpace.src = "space.gif";
+			rulesScreen = new Image();
+			rulesScreen.src = "InstructionsPic.png";
+			if(curkeys[32]){ 
+			gameState = "play"
+			}
+
+			}
+			
+			if (gameState == "play"){
+			//Updates
+				gameMusic.play();
+				playerShip.boost();
+				
+				//if(playerlives < 100){
+				//playerlives += 1
+				//}
+					for (i = 0; i < 100; i++){
+					laserArray[i].update();
+					}
+			
+			if(crate.bVisible == false){
+					crate.x = playerShip.x
+				}
+				
+				crate.updateAmmoDrop();
+				playerShip.update();
+					for (i = 0; i < numofAliens; i++){
+					alienArrayWall[i].updateAlienWall();
+					}
+					
+					if(score > 100){ // if score is greater then 100, Alien attacker starts
+						for (i = 0; i < numofAliens2; i++){
+						alienAttacker[i].updateAlienAttacker();
+						}
+					}
+				
+				// Arrow keys for playerShip movement
+				if(curkeys[37]){ //move left
+				playerShip.moveLeft();
+				}
+				
+				if(curkeys[39]){ // move right
+				playerShip.moveRight();
+				}
+				
+				if(curkeys[38]){ //move up
+				playerShip.moveUp();
+				}
+				
+				if(curkeys[40]){ // move down
+				playerShip.moveDown();
+				}
+				
+				
+				if(curkeys[49]){ // 1
+				weaponState = "laser"
+				}
+				
+				if(curkeys[50]){ // 2
+				weaponState = "phaser"
+				}
+				
+				if(playerlives <= 0){ // if playerlives is 0, change gamestate to 'gameover'
+				gameState = "gameover"
+				}
+				
+				if(weaponState == "laser" && ammo > 0){	
+					if(newkeys[13]){ // 13 is enter
+						ammo -= 1
+						if(laserArray[laserIndex].bVisible == false){
+						laserArray[laserIndex].x = playerShip.x + 20;
+						laserArray[laserIndex].y = playerShip.y ;
+						laserArray[laserIndex].bVisible = true;
+						}
+					}
+					
+					
+					//increment the pebbleIndex (get ready for next pebble)
+					laserIndex++
+					//if we go over 100 pebbles, rest to 0
+					if(laserIndex == 100){
+					laserIndex = 0;
+					}
+					
+				for(var i = 0; i < 100; i++){
+				laserArray[i].update();
+				}
+		
+			} else if(weaponState == "phaser" && ammo > 0){	
+					if(curkeys[13]){ // 13 is enter
+						ammo -= 1
+						if(laserArray[laserIndex].bVisible == false){
+						laserArray[laserIndex].x = playerShip.x + 20;
+						laserArray[laserIndex].y = playerShip.y ;
+						laserArray[laserIndex].bVisible = true;
+						}
+					}
+					
+					
+					//increment the pebbleIndex (get ready for next pebble)
+					laserIndex++
+					//if we go over 100 pebbles, rest to 0
+					if(laserIndex == 100){
+					laserIndex = 0;
+					}
+					
+				for(var i = 0; i < 100; i++){
+				laserArray[i].update();
+				}
+		
+			} 
+		
+		
+			
+			if(gameState == "gameover"){ 
+		
+			}
+			
+		
+		
+		
+		
+		}
+		
+	
+				
+			
+			
+			// DO NOT ADD ANY OR MODIFY ANY CODE BELOW HERE
+
+			// Reset newkeys
+			for (i = 0; i < 256; i++){
+				newkeys[i] = false;
+			}
+
+			// At the end of the update function, repaint the screen
+			gameDraw();
+				
+			// Last thing the update function does is to schedule itself to be called
+			// again before the next repaint
+			window.requestAnimationFrame(gameUpdate);
+		}
+
+
+		function gameDraw(){
+			// Clear the canvas before we draw the current frame
+			c.clearRect(0,0,cWidth,cHeight);
+		
+			
+			if(gameState == "play"){
+				myCanvas.style.backgroundImage = "url(backgroundgif.gif)"
+			
+				for (i = 0; i < numofAliens; i++){
+					alienArrayWall[i].draw();
+				}
+				
+				for (i = 0; i < 100; i++){
+				laserArray[i].draw();
+				}
+			
+				for (i = 0; i < numofAliens2; i++){
+				alienAttacker[i].draw();
+				}
+				crate.draw();
+				menubar1.draw();
+				playerShip.draw();
+				c.font = "40px Arial";
+				c.fillStyle="#FF0000";
+				c.fillText("Health: " + playerlives+"%",50,560);
+				c.fillText("AMMO: " + ammo,325,560);
+				c.fillText("Score: " + score,600,560);
+			}
+			
+			if(gameState == "play2"){
+		
+			}
+			
+			
+			if(gameState == "rules"){
+				c.drawImage(rulesSpace,0,0,cWidth,cHeight);
+				c.drawImage(rulesScreen,0,0,cWidth,cHeight);
+				c.font = "40px Arial";
+				c.fillStyle="#FF0000";
+				c.fillText("TEST, press Space",225,520);
+				
+			}
+			if(gameState == "gameover"){
+				myCanvas.style.backgroundImage = ""
+			}
+			if (gameState == "intro"){
+				c.drawImage(introScreen,0,0,cWidth,cHeight); //draws the intro Screen
+				comet.draw();
+				introAlien.draw();
+				introAlien2.draw();
+				c.drawImage(introTitle,150,50,500,200); //draws intro title
+			
+	//	if(flashingTimer.isReady()){  <--TO DO, Flashing words in intro 
+				c.font = "40px Arial";
+				c.fillStyle="#FF0000";
+				c.fillText("Press Enter to Start!",225,520);
+		//	}
+		
+		}
+		}
+
+	//Notes-
+	//Use cookies for highscore
+	// laser with curkeys - work on weapon states
+	//use same ammo tho
+	//
+	
+	</script>
+
+</head>
+
+
+<body onload="gameFrameworkInit()">
+	
+	<canvas id="myCanvas" width="800" height="600"></canvas>
+
+</body>
+
+
+</html>

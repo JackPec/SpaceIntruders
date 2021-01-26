@@ -1,0 +1,13 @@
+Objective- Survive...
+
+Rules/Tips:
+
+Press Q to buy ammo 
+
+Press E to buy Heath
+
+Press 1 or 2 to switch between laser and phaser weapons 
+
+Use Arrow keys to move and "enter" key to shoot
+
+Good Luck...
